@@ -51,7 +51,3 @@ SCRIPT
   end
 end
 
-#!/bin/bash
-
-# Use a more recent pip
-
