@@ -1,0 +1,19 @@
+# Python
+*.py[cod]
+*.egg-info/
+
+# ansible files
+*.retry
+.galaxy_install_info
+
+# vim swap files
+*.swp
+
+# vscode
+.vscode
+
+# https://direnv.net
+.envrc
+
+.vagrant
+

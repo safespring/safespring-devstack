@@ -5,26 +5,35 @@ Vagrant.configure("2") do |config|
 
   config.vm.box = "safespring/base"
 
-  # box name based on smie project
-  # config.vm.define "postgres"
-
   # ssh settings
   config.ssh.username = "admin"
   config.ssh.private_key_path = "~/.ssh/id_rsa"
 
-  # disable default shared folder
-  config.vm.synced_folder ".", "/vagrant", disabled: true
+  config.vm.synced_folder ".", "/vagrant", type: "rsync"
 
-  config.vm.synced_folder ".", "/etc/ansible",
-    type: "rsync",
-    rsync__args: ["--verbose", "--rsync-path='sudo rsync'", "--archive"]
+  # install git and update using ansible
+  config.vm.provision :shell, :keep_color => true, :inline => <<SCRIPT
+  export PYTHONUNBUFFERED=1
+  export ANSIBLE_FORCE_COLOR=true
+  ansible-playbook \
+    -e hostname_name=dev-test-devstack-1 \
+    -e role=hostname /etc/ansible/common.yaml
+  ansible-playbook \
+    -e packages_install=git,bridge-utils \
+    -e packages_update=True \
+    -e packages_clean=True \
+    -e role=packages /etc/ansible/common.yaml || true
+SCRIPT
 
-  # read and map ENV vars with SMIE_ prefix
-  env_vars = ENV.select { |k, _| /^ANSIBLE_/i.match(k) }
-
-  # provision
-  config.vm.provision :shell, keep_color: true, env: env_vars, :inline => <<SCRIPT
-
+  # run devstack
+  config.vm.provision :shell, :keep_color => true, :privileged => false, :inline => <<SCRIPT
+  sudo pip install --upgrade pip
+  sudo pip install --upgrade setuptools
+  git clone https://opendev.org/openstack/devstack.git
+  cp /vagrant/local.conf devstack/local.conf
+  cd devstack
+  git checkout stable/stein
+  ./stack.sh
 SCRIPT
 
   # provider-specific configuration
@@ -41,3 +50,8 @@ SCRIPT
     libvirt.machine_virtual_size = 100
   end
 end
+
+#!/bin/bash
+
+# Use a more recent pip
+
