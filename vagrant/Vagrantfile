@@ -34,8 +34,9 @@ SCRIPT
   cd devstack
   git checkout stable/stein
   ./stack.sh
-  echo Allow connects to port 80
+  echo Allow connects to port 80, 6080
   sudo iptables -A INPUT -p tcp -m tcp --dport 80 -j ACCEPT
+  sudo iptables -A INPUT -p tcp -m tcp --dport 6080 -j ACCEPT
 SCRIPT
 
   # provider-specific configuration
