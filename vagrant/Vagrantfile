@@ -9,7 +9,7 @@ Vagrant.configure("2") do |config|
   config.ssh.username = "admin"
   config.ssh.private_key_path = "~/.ssh/id_rsa"
 
-  config.vm.synced_folder ".", "/vagrant", type: "rsync"
+  config.vm.synced_folder "..", "/vagrant", type: "rsync"
 
   # install git and update using ansible
   config.vm.provision :shell, :keep_color => true, :inline => <<SCRIPT
