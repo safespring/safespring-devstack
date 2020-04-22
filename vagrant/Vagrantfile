@@ -3,7 +3,8 @@
 
 Vagrant.configure("2") do |config|
 
-  config.vm.box = "safespring/base"
+  config.vm.box = "smie/base"
+  config.vm.box_url = "http://repo-prod-app1.srv.cloud.ipnett.se/naust/mirror/file/smie/base/metadata.json"
 
   # ssh settings
   config.ssh.username = "admin"
